@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ecuații - Algoritm genetic</title>
+</head>
+<body>
+    <script type="text/javascript">
+        
+        function getRandomInt(min, max) {
+
+            return Math.floor(Math.random() * (max - min)) + min;
+
+        }
+
+        function Generation(x = null, y = null) {
+
+            this.x = x;
+            this.y = y;
+
+        }
+
+        var valoareMaximaAbsoluta = 100;
+
+        function fitness(generation) {
+
+            var ecX = Math.abs(3*generation.x + generation.y - 5);
+            var ecY = Math.abs(6*generation.x + 4*generation.y - 8);
+
+            return ecX + ecY;
+
+        }
+
+        function generateGeneration() {
+
+            var newGeneration = new Generation;
+
+            newGeneration.x = getRandomInt(0, valoareMaximaAbsoluta+1);
+            newGeneration.y = getRandomInt(0, valoareMaximaAbsoluta+1);
+
+            if (!getRandomInt(0, 2)) newGeneration.x = -newGeneration.x;
+            if (!getRandomInt(0, 2)) newGeneration.y = -newGeneration.y;
+
+            return newGeneration;
+        }
+
+        function mutate(previousGeneration) {
+
+            var newGeneration = new Generation;
+
+            newGeneration.x = previousGeneration.x;
+            newGeneration.y = previousGeneration.y;
+
+            while (newGeneration.x == previousGeneration.x) {
+
+                newGeneration.x = getRandomInt(0, valoareMaximaAbsoluta+1);
+                if (!getRandomInt(0, 2)) newGeneration.x = -newGeneration.x;
+
+            }
+
+            while (newGeneration.y == previousGeneration.y) {
+
+                newGeneration.y = getRandomInt(0, valoareMaximaAbsoluta+1);
+                if (!getRandomInt(0, 2)) newGeneration.y = -newGeneration.y;
+
+            }
+
+            return newGeneration;
+        }
+
+        var bestGeneration = generateGeneration();
+        var bestFitness = fitness(bestGeneration);
+        var optimalFitness = 0;
+
+        console.log(`Se dă: {3*x+y-5=0, 6*x+4*y-8=0}, Fitness optim: ${optimalFitness}`);
+        console.log('');
+        console.log(`x = ${bestGeneration.x}\t\ty = ${bestGeneration.y}\t\tFitness: ${bestFitness}`);
+
+        var maxIterations = 100000;
+        var iterationsCount = 0;
+        
+        while (iterationsCount < maxIterations) {
+
+            iterationsCount++;
+
+            var newGeneration = mutate(bestGeneration);
+            var newGenerationFitness = fitness(newGeneration);
+
+            if (newGenerationFitness === optimalFitness) {
+                
+                bestGeneration = newGeneration;
+                bestFitness = newGenerationFitness;
+
+                console.log(`x = ${bestGeneration.x}\t\ty = ${bestGeneration.y}\t\tFitness: ${bestFitness}`);
+
+                break;
+
+            }
+
+            if (newGenerationFitness < bestFitness) {
+
+                bestGeneration = newGeneration;
+                bestFitness = newGenerationFitness;
+
+                console.log(`x =${bestGeneration.x}\t\ty = ${bestGeneration.y}\t\tFitness: ${bestFitness}`);
+
+            }
+
+        }
+
+        console.log('');
+        console.log(`Iterații parcurse: ${iterationsCount}`);
+
+    </script>
+</body>
+</html>

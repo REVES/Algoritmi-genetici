@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mesaj - Algoritm genetic</title>
+</head>
+<body>
+    <script type="text/javascript">
+        
+        function getRandomInt(min, max) {
+
+            return Math.floor(Math.random() * (max - min)) + min;
+
+        }
+
+        var pattern = ' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!';
+        var message = 'Hello World!';
+
+        function fitness(generation) {
+
+            var match = 0;
+
+            for (var i=0; i<message.length; i++) {
+
+                if (message[i] == generation[i]) match++;
+
+            }
+
+            return match;
+        }
+
+        function generateGeneration() {
+
+            var newGeneration = '';
+
+            for (var i=0; i<message.length; i++) {
+                
+                newGeneration += pattern[getRandomInt(0, pattern.length)];
+
+            }
+
+            return newGeneration;
+        }
+
+        function mutate(previousGeneration) {
+
+            var mutatingGeneIndex = getRandomInt(0, previousGeneration.length);
+            var newGene = previousGeneration[mutatingGeneIndex];
+            
+            while (previousGeneration[mutatingGeneIndex] == newGene) {
+
+                newGene = pattern[getRandomInt(0, pattern.length)];
+
+            }
+            
+            var newGeneration = '';
+
+            for (var i=0; i<previousGeneration.length; i++) {
+
+                if (i == mutatingGeneIndex) newGeneration += newGene;
+                else newGeneration += previousGeneration[i];
+
+            }
+
+            return newGeneration;
+        }
+
+        var bestGeneration = generateGeneration();
+        var bestFitness = fitness(bestGeneration);
+        var optimalFitness = message.length;
+
+        console.log(`Mesajul căutat: ${message}, cu Fitness optim: ${optimalFitness}`);
+        console.log('');
+        console.log(`${bestGeneration}\t\tFitness: ${bestFitness}`);
+
+        var maxIterations = 100000;
+        var iterationsCount = 0;
+        var notMathingPattern = false;
+
+        for (var i=0; i<message.length; i++) {
+
+            var notMatchingLetter = true;
+
+            for (var j=0; j<pattern.length; j++) {
+
+                if (message[i] == pattern[j]) {
+
+                    notMatchingLetter = false;
+                    break;
+
+                }
+
+            }
+
+            if (notMatchingLetter) {
+
+                notMathingPattern = true;
+                break;
+
+            }
+        }
+
+        if (notMathingPattern) {
+                
+            console.log(`Mesajul: "${message}" nu corespunde șablonului "${pattern}"`);
+
+        } else {
+
+            while (iterationsCount < maxIterations) {
+    
+                iterationsCount++;
+
+                var newGeneration = mutate(bestGeneration);
+                var newGenerationFitness = fitness(newGeneration);
+
+                if (newGenerationFitness == optimalFitness) {
+                    
+                    bestGeneration = newGeneration;
+                    bestFitness = newGenerationFitness;
+
+                    console.log(`${bestGeneration}\t\tFitness: ${bestFitness}`);
+
+                    break;
+
+                }
+
+                if (newGenerationFitness > bestFitness) {
+
+                    bestGeneration = newGeneration;
+                    bestFitness = newGenerationFitness;
+
+                    console.log(`${bestGeneration}\t\tFitness: ${bestFitness}`);
+
+                }
+
+            }
+
+            console.log('');
+            console.log(`Iterații parcurse: ${iterationsCount}`);
+
+        }
+
+    </script>
+</body>
+</html>
